@@ -39,10 +39,12 @@
 
 | ドキュメント | 内容 |
 |------------|------|
-| [docs/target_and_channel.md](docs/target_and_channel.md) | ターゲット・チャネル・サイト構成・料金Tier |
+| [docs/strategic_decisions.md](docs/strategic_decisions.md) | 事業仮説検証・身元開示方針・並列開発方針・未決定事項 |
+| [docs/target_and_channel.md](docs/target_and_channel.md) | ターゲット・チャネル・X戦略・サイト構成・料金Tier |
 | [docs/content_calendar.md](docs/content_calendar.md) | 24本カレンダー・URLスラッグ・SEO・KWマッピング |
 | [docs/cta_strategy.md](docs/cta_strategy.md) | CTA詳細・PDFレポート構成・ステップメール・無料モニター |
 | [docs/content_guidelines.md](docs/content_guidelines.md) | 記事テンプレ・投稿ルール・ネタ切れ防止4軸 |
+| [docs/profiles.md](docs/profiles.md) | X・noteプロフィール文（確定版） |
 | [docs/kpi_and_todos.md](docs/kpi_and_todos.md) | KPI・残課題・次のアクション |
 | [articles/](articles/) | 完成記事のMarkdown |
 | [barbara-saas](https://github.com/beru3/barbara-saas) | プロダクト開発（API・分析・レポート生成） |
