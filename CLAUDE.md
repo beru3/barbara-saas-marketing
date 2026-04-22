@@ -45,6 +45,7 @@
 | [docs/cta_strategy.md](docs/cta_strategy.md) | CTA詳細・PDFレポート構成・ステップメール・無料モニター |
 | [docs/content_guidelines.md](docs/content_guidelines.md) | 記事テンプレ・投稿ルール・ネタ切れ防止4軸 |
 | [docs/profiles.md](docs/profiles.md) | X・noteプロフィール文（確定版） |
+| [docs/site_plan.md](docs/site_plan.md) | barbara.co.jpサイト設計・作業進捗 |
 | [docs/kpi_and_todos.md](docs/kpi_and_todos.md) | KPI・残課題・次のアクション |
 | [articles/](articles/) | 完成記事のMarkdown |
 | [barbara-saas](https://github.com/beru3/barbara-saas) | プロダクト開発（API・分析・レポート生成） |
