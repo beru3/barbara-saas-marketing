@@ -122,15 +122,15 @@ site/
 
 | # | タスク | 状態 | 備考 |
 |---|--------|------|------|
-| 1 | 共通CSS（style.css） | 未着手 | CSS変数、リセット、ヘッダー/フッター、ボタン、レスポンシブ |
-| 2 | トップページ（index.html） | 未着手 | 会社サイト。4セクション |
-| 3 | ミルカルテ紹介（mirukarte/index.html） | 未着手 | サービス訴求。院長向け |
-| 4 | PDFダウンロードLP（lp/report/index.html） | 未着手 | Brevoフォームプレースホルダ |
-| 5 | モニター登録LP（lp/monitor/index.html） | 未着手 | Brevoフォームプレースホルダ |
-| 6 | メタタグ設定（title, description, OGP） | 未着手 | 全ページ |
-| 7 | Brevoフォーム作成・埋め込み | 未着手 | Brevo側の操作が必要 |
+| 1 | 共通CSS（style.css） | **完了** | CSS変数、リセット、ヘッダー/フッター、ボタン、レスポンシブ |
+| 2 | トップページ（index.html） | **完了** | 会社サイト。4セクション。設立年・所在地は要記入 |
+| 3 | ミルカルテ紹介（mirukarte/index.html） | **完了** | サービス訴求。院長向け。6セクション |
+| 4 | PDFダウンロードLP（lp/report/index.html） | **完了** | Brevoフォームプレースホルダ設置済み |
+| 5 | モニター登録LP（lp/monitor/index.html） | **完了** | Brevoフォームプレースホルダ設置済み |
+| 6 | メタタグ設定（title, description, OGP） | **完了** | 全ページに設定済み |
+| 7 | Brevoフォーム作成・埋め込み | 未着手 | Brevo側の操作が必要。プレースホルダIDは brevo-form-report / brevo-form-monitor |
 | 8 | mixhostへアップロード | 未着手 | 全ページ完成後 |
-| 9 | 動作確認（PC・スマホ） | 未着手 | |
+| 9 | 動作確認（PC・スマホ） | 未着手 | ローカル確認→mixhostアップロード後に再確認 |
 
 ---
 
