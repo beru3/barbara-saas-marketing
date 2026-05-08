@@ -22,7 +22,7 @@
 barbara.co.jp/              → 会社トップ（バーバラ企画）
 barbara.co.jp/mirukarte       → ミルカルテ サービス紹介
 barbara.co.jp/lp/report      → PDFダウンロードLP
-barbara.co.jp/lp/monitor     → モニター登録LP
+barbara.co.jp/lp/founders    → 初期参画院募集LP
 ```
 
 ---
@@ -37,8 +37,8 @@ site/
   lp/
     report/
       index.html              # PDFダウンロードLP
-    monitor/
-      index.html              # モニター登録LP
+    founders/
+      index.html              # 初期参画院募集LP
   css/
     style.css                 # 共通CSS（全ページ共有）
   images/                     # 画像アセット（後日追加）
@@ -89,19 +89,20 @@ site/
 | **安心材料** | 「売り込みメールは送りません」「いつでも配信解除可能」 |
 | **Footer** | 簡略版 |
 
-### 4. モニター登録LP（lp/monitor/index.html）
+### 4. 初期参画院募集LP（lp/founders/index.html）
 
-無料モニターに申し込むLP。BOFU記事からの導線。
+第1期の先生を募集するLP。BOFU記事からの導線。
 
 | セクション | 内容 |
 |-----------|------|
 | **Header** | 簡略版 |
-| **ヒーロー** | 「先生のクリニックのデータで、無料レポートをお作りします」 |
+| **ヒーロー** | 「ミルカルテを一緒に作ってくれる先生を探しています」 |
+| **第1期の特権** | 先行利用・設計への影響力・匿名ベンチマーク共有・第1期価格の永久ロック |
 | **受け取れるもの** | 離脱予備軍レポート・推定損失額・疾患別内訳・改善提案 |
 | **お願いすること** | レセコン集計データ提供＋月1回15分フィードバック面談 |
-| **流れ** | 申込→データ受領→レポート作成→フィードバックの4ステップ |
-| **フォーム** | Brevoフォーム埋め込みプレースホルダ（`<div id="brevo-form-monitor">`） |
-| **FAQ** | 費用は？→無料 / 期間は？→3ヶ月 / データは？→厳重管理 |
+| **流れ** | 応募→データ受領→レポート作成→フィードバックの4ステップ |
+| **フォーム** | Brevoフォーム埋め込みプレースホルダ（`<div id="brevo-form-founders">`） |
+| **FAQ** | 費用は？→無料 / 期間は？→3ヶ月 / データは？→厳重管理 / 何院限定？→少数限定 |
 | **Footer** | 簡略版 |
 
 ---
@@ -126,9 +127,9 @@ site/
 | 2 | トップページ（index.html） | **完了** | 会社サイト。4セクション。設立年・所在地は要記入 |
 | 3 | ミルカルテ紹介（mirukarte/index.html） | **完了** | サービス訴求。院長向け。6セクション |
 | 4 | PDFダウンロードLP（lp/report/index.html） | **完了** | Brevoフォームプレースホルダ設置済み |
-| 5 | モニター登録LP（lp/monitor/index.html） | **完了** | Brevoフォームプレースホルダ設置済み |
+| 5 | 初期参画院募集LP（lp/founders/index.html） | **完了** | Brevoフォームプレースホルダ設置済み |
 | 6 | メタタグ設定（title, description, OGP） | **完了** | 全ページに設定済み |
-| 7 | Brevoフォーム作成・埋め込み | 未着手 | Brevo側の操作が必要。プレースホルダIDは brevo-form-report / brevo-form-monitor |
+| 7 | Brevoフォーム作成・埋め込み | 未着手 | Brevo側の操作が必要。プレースホルダIDは brevo-form-report / brevo-form-founders |
 | 8 | mixhostへアップロード | 未着手 | 全ページ完成後 |
 | 9 | 動作確認（PC・スマホ） | 未着手 | ローカル確認→mixhostアップロード後に再確認 |
 
@@ -137,6 +138,7 @@ site/
 ## 注意事項
 
 - 自社サイトではミルカルテのサービス名使用OK（note記事のMonth 1-4制約は適用外）
-- note記事のCTA遷移先は /lp/report（TOFU/MOFU）または /lp/monitor（BOFU）
+- note記事のCTA遷移先は /lp/report（TOFU/MOFU）または /lp/founders（BOFU）
 - 既存のAIコンサル系コンテンツは全削除
 - docs/cta_strategy.md のBrevo LP記載は、サイト完成後に更新する
+- 旧パス /lp/monitor は使用しない。初期参画院募集は /lp/founders に統一

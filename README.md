@@ -13,7 +13,7 @@
 | `CLAUDE.md` | Claude Code向け行動指示（ペルソナ・トーン・禁止パターン・docs参照リンク） |
 | `docs/target_and_channel.md` | ターゲット・チャネル・サイト構成・料金Tier |
 | `docs/content_calendar.md` | 24本カレンダー・URLスラッグ・SEO・KWマッピング |
-| `docs/cta_strategy.md` | CTA詳細・PDFレポート構成・ステップメール・無料モニター |
+| `docs/cta_strategy.md` | CTA詳細・PDFレポート構成・ステップメール・初期参画院募集 |
 | `docs/content_guidelines.md` | 記事テンプレ・投稿ルール・ネタ切れ防止4軸 |
 | `docs/kpi_and_todos.md` | KPI・残課題・次のアクション |
 | `articles/` | 完成記事のMarkdown |

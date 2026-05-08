@@ -28,12 +28,13 @@
 - NEVER 院長を上から教える口調で書く
 - NEVER マーケター語彙をそのまま使う（LTV→「リピート患者」、チャーン→「離脱率」）
 
-## CTA方針（2026年4月確定）
+## CTA方針（2026年5月更新）
 
-- **メインCTA：無料PDFレポート** → ステップメールで無料モニター登録へ誘導
-- **サブCTA：無料モニター登録**（BOFU記事からのみ直接誘導）
-- LP技術：**Brevo**（lp.barbara.co.jp）
+- **メインCTA：無料PDFレポート** → ステップメールで初期参画院募集へ誘導
+- **サブCTA：初期参画院への応募**（BOFU記事からのみ直接誘導）
+- LP技術：**Brevo**（barbara.co.jp）
 - 主戦場は直接営業。note記事は信頼の裏付け
+- 共創型マーケ：顧客を「共創者」として迎える。詳細は [docs/cta_strategy.md](docs/cta_strategy.md) を参照
 
 ## 関連ドキュメント
 
@@ -42,7 +43,7 @@
 | [docs/strategic_decisions.md](docs/strategic_decisions.md) | 事業仮説検証・身元開示方針・並列開発方針・未決定事項 |
 | [docs/target_and_channel.md](docs/target_and_channel.md) | ターゲット・チャネル・X戦略・サイト構成・料金Tier |
 | [docs/content_calendar.md](docs/content_calendar.md) | 24本カレンダー・URLスラッグ・SEO・KWマッピング |
-| [docs/cta_strategy.md](docs/cta_strategy.md) | CTA詳細・PDFレポート構成・ステップメール・無料モニター |
+| [docs/cta_strategy.md](docs/cta_strategy.md) | CTA詳細・PDFレポート構成・ステップメール・初期参画院募集 |
 | [docs/content_guidelines.md](docs/content_guidelines.md) | 記事テンプレ・投稿ルール・ネタ切れ防止4軸 |
 | [docs/profiles.md](docs/profiles.md) | X・noteプロフィール文（確定版） |
 | [docs/site_plan.md](docs/site_plan.md) | barbara.co.jpサイト設計・作業進捗 |
