@@ -10,6 +10,397 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://barbara.co.jp/lp/founders/">
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* === Founders LP specific styles === */
+
+    /* Hero with image */
+    .hero-founders {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: var(--white);
+      padding: 48px 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-founders .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      position: relative;
+    }
+    .hero-founders-text {
+      text-align: center;
+    }
+    .hero-founders-text h1 {
+      color: var(--white);
+      font-size: 1.75rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      font-weight: 800;
+    }
+    .hero-founders-text p {
+      opacity: 0.9;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+    .hero-founders-img {
+      max-width: 480px;
+      width: 100%;
+    }
+    .hero-founders-img img {
+      border-radius: var(--radius-lg);
+      width: 100%;
+      height: auto;
+    }
+    @media (min-width: 768px) {
+      .hero-founders {
+        padding: 80px 0;
+        min-height: 380px;
+      }
+      .hero-founders .container {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+      }
+      .hero-founders-text {
+        text-align: left;
+        flex: 0 0 auto;
+        max-width: 480px;
+        position: relative;
+        z-index: 2;
+      }
+      .hero-founders-text h1 {
+        font-size: 2.6rem;
+        line-height: 1.4;
+      }
+      .hero-founders-text p {
+        font-size: 1.1rem;
+      }
+      .hero-founders-img {
+        position: absolute;
+        right: -60px;
+        top: 50%;
+        transform: translateY(-50%);
+        max-width: 55%;
+        z-index: 1;
+      }
+      .hero-founders-img img {
+        border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+      }
+    }
+    @media (min-width: 1080px) {
+      .hero-founders-img {
+        right: -120px;
+        max-width: 580px;
+      }
+    }
+
+    /* Privilege cards - 4 columns with icons */
+    .privilege-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 768px) {
+      .privilege-cards {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+    }
+    .privilege-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 16px;
+      text-align: center;
+      transition: box-shadow 0.2s;
+    }
+    .privilege-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+    .privilege-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .privilege-icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .privilege-card h3 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: var(--navy);
+    }
+    .privilege-card p {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* Cards with photos */
+    .photo-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 768px) {
+      .photo-cards {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+    }
+    .photo-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s;
+    }
+    .photo-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+    .photo-card-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+    .photo-card-body {
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .photo-card-body h3 {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      color: var(--navy);
+    }
+    .photo-card-body p {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* Horizontal process flow */
+    .process-flow {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    @media (min-width: 768px) {
+      .process-flow {
+        grid-template-columns: repeat(7, auto);
+        align-items: flex-start;
+        gap: 0;
+      }
+    }
+    .process-step {
+      text-align: center;
+    }
+    .process-step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      color: var(--white);
+      border-radius: 50%;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .process-step-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .process-step-icon svg {
+      width: 48px;
+      height: 48px;
+      stroke: var(--navy);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .process-step h3 {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: var(--navy);
+    }
+    .process-step p {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      line-height: 1.5;
+      max-width: 160px;
+      margin: 0 auto;
+    }
+    .process-arrow {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .process-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--border);
+        padding-top: 60px;
+      }
+    }
+
+    /* Form section with image */
+    .form-section {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: var(--white);
+      padding: 64px 0;
+    }
+    .form-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      align-items: center;
+    }
+    @media (min-width: 768px) {
+      .form-layout {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 48px;
+      }
+    }
+    .form-left {
+      text-align: center;
+    }
+    @media (min-width: 768px) {
+      .form-left {
+        flex: 0 0 280px;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+    }
+    .form-left-img {
+      border-radius: var(--radius-lg);
+      max-width: 280px;
+      width: 100%;
+      margin-bottom: 24px;
+    }
+    .form-left h2 {
+      color: var(--white);
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+    .form-left p {
+      opacity: 0.85;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .form-left-meta {
+      font-size: 0.85rem;
+      opacity: 0.7;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-right {
+      flex: 1;
+      max-width: 640px;
+      width: 100%;
+    }
+    .form-right iframe {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+    }
+
+    /* FAQ with image */
+    .faq-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    @media (min-width: 768px) {
+      .faq-layout {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 48px;
+      }
+    }
+    .faq-content {
+      flex: 1;
+    }
+    .faq-image {
+      flex-shrink: 0;
+    }
+    @media (min-width: 768px) {
+      .faq-image {
+        max-width: 300px;
+      }
+    }
+    .faq-image img {
+      border-radius: var(--radius-lg);
+      width: 100%;
+    }
+
+    /* FAQ accordion style */
+    .faq-item-v2 {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-q-v2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--navy);
+      font-size: 0.95rem;
+    }
+    .faq-q-v2::before {
+      content: "Q. ";
+      color: var(--accent);
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+    .faq-q-v2::after {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid var(--text-light);
+      border-bottom: 2px solid var(--text-light);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+      margin-left: 16px;
+      transition: transform 0.2s;
+    }
+    .faq-item-v2.open .faq-q-v2::after {
+      transform: rotate(-135deg);
+    }
+    .faq-a-v2 {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      padding: 0 0 18px 24px;
+      line-height: 1.7;
+      display: none;
+    }
+    .faq-item-v2.open .faq-a-v2 {
+      display: block;
+    }
+  </style>
 </head>
 <body>
 
@@ -20,11 +411,16 @@
     </div>
   </header>
 
-  <!-- Hero -->
-  <section class="hero">
+  <!-- Hero with doctor image -->
+  <section class="hero-founders">
     <div class="container">
-      <h1>ミルカルテを一緒に作ってくれる<br>先生を探しています。</h1>
-      <p>サービスの設計に参加いただける第1期の先生を、少数限定で募集しています。<br>先生の院の実際のデータで無料レポートを作成し、一緒にサービスを磨いていきます。</p>
+      <div class="hero-founders-text">
+        <h1>ミルカルテを一緒に<br>作ってくれる先生を<br>探しています。</h1>
+        <p>サービスの設計に参加いただける第1期の先生を、<br>少数限定で募集しています。</p>
+      </div>
+      <div class="hero-founders-img">
+        <img src="/images/hero-doctor.png" alt="ミルカルテのダッシュボードを確認する医師" width="420" height="280">
+      </div>
     </div>
   </section>
 
@@ -32,118 +428,169 @@
   <section class="section">
     <div class="container">
       <h2 class="section-title">第1期の先生だけの特権</h2>
-      <div class="cards cards-2">
-        <div class="card">
-          <div class="card-icon">&#128640;</div>
+      <div class="privilege-cards">
+        <div class="privilege-card">
+          <div class="privilege-icon">
+            <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
           <h3>先行利用</h3>
-          <p>正式リリース前からサービスをご利用いただけます。誰よりも早く、患者離脱の可視化を始められます。</p>
+          <p>正式リリース前に先行してご利用いただけます。誰よりも早く、患者離脱の可視化を始められます。</p>
         </div>
-        <div class="card">
-          <div class="card-icon">&#128483;</div>
+        <div class="privilege-card">
+          <div class="privilege-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </div>
           <h3>設計への影響力</h3>
-          <p>月1回のフィードバックが、そのままサービスのロードマップに反映されます。「こういう機能がほしい」を直接届けられます。</p>
+          <p>先生のご意見がプロダクトの設計に直接反映されます。</p>
         </div>
-        <div class="card">
-          <div class="card-icon">&#128202;</div>
+        <div class="privilege-card">
+          <div class="privilege-icon">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
           <h3>匿名ベンチマーク共有</h3>
-          <p>参画院の匿名データを基にした離脱率・復帰率のベンチマークを共有。自院の立ち位置がわかります。</p>
+          <p>同規模・同診療科の匿名データと比較できます。</p>
         </div>
-        <div class="card">
-          <div class="card-icon">&#128274;</div>
-          <h3>第1期価格の永久ロック</h3>
-          <p>正式リリース後も、第1期の特別価格が永久に適用されます。</p>
+        <div class="privilege-card">
+          <div class="privilege-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3>第1期価格の<br>永久ロック</h3>
+          <p>第1期限定の特別価格が永久に適用されます。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- What you get -->
+  <!-- What you get - with photos -->
   <section class="section section-alt">
     <div class="container">
       <h2 class="section-title">先生が受け取れるもの</h2>
-      <div class="cards cards-2">
-        <div class="card">
-          <div class="card-icon">&#128203;</div>
-          <h3>離脱予備軍レポート</h3>
-          <p>先生の院の慢性疾患患者のうち、3ヶ月以上来院のない人数を算出。高血圧・糖尿病・脂質異常症など疾患別の内訳もお出しします。</p>
+      <div class="photo-cards">
+        <div class="photo-card">
+          <img class="photo-card-img" src="/images/card-laptop.png" alt="離脱予備軍レポート画面">
+          <div class="photo-card-body">
+            <h3>離脱予備軍レポート</h3>
+            <p>患者さんが離脱する前に気づけるサインを可視化。</p>
+          </div>
         </div>
-        <div class="card">
-          <div class="card-icon">&#128178;</div>
-          <h3>推定機会損失額</h3>
-          <p>離脱予備軍を放置した場合の年間損失額を、先生の院の診療単価で試算します。</p>
+        <div class="photo-card">
+          <img class="photo-card-img" src="/images/card-calculator.png" alt="推定機会損失額の算出">
+          <div class="photo-card-body">
+            <h3>推定機会損失額</h3>
+            <p>離脱による将来の機会損失を金額ベースで推定します。</p>
+          </div>
         </div>
-        <div class="card">
-          <div class="card-icon">&#128161;</div>
-          <h3>改善アクションの提案</h3>
-          <p>先生の院の状況に合わせた、具体的な第一歩をご提案します。一般論ではなく、データに基づいた打ち手です。</p>
+        <div class="photo-card">
+          <img class="photo-card-img" src="/images/card-meeting.png" alt="改善アクションの提案">
+          <div class="photo-card-body">
+            <h3>改善アクションの提案</h3>
+            <p>データに基づく具体的な改善アクションをご提案。</p>
+          </div>
         </div>
-        <div class="card">
-          <div class="card-icon">&#128172;</div>
-          <h3>フィードバック面談</h3>
-          <p>月1回・15分のオンライン面談で、レポートの見方や疑問点をご説明します。先生の率直なご意見がサービス改善に直結します。</p>
+        <div class="photo-card">
+          <img class="photo-card-img" src="/images/card-doctor.png" alt="フィードバック面談">
+          <div class="photo-card-body">
+            <h3>フィードバック面談</h3>
+            <p>結果のご説明と改善に向けたディスカッションを実施。</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Process -->
+  <!-- Process flow -->
   <section class="section">
     <div class="container">
-      <h2 class="section-title">お申し込みからレポート作成までの流れ</h2>
-      <div class="process">
-        <div class="process-item">
-          <div class="process-num">1</div>
-          <div class="process-text">下記フォームからお申し込み（1分）</div>
+      <h2 class="section-title">お申し込みの流れ</h2>
+      <div class="process-flow">
+        <div class="process-step">
+          <div class="process-step-num">1</div>
+          <div class="process-step-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          </div>
+          <h3>フォームから<br>お申し込み</h3>
+          <p>下記フォームより必要事項をご入力ください。</p>
         </div>
-        <div class="process-item">
-          <div class="process-num">2</div>
-          <div class="process-text">レセコンの集計データをご提供いただく（個別の患者名は不要）</div>
+        <div class="process-arrow">&rarr;</div>
+        <div class="process-step">
+          <div class="process-step-num">2</div>
+          <div class="process-step-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <h3>データご提供</h3>
+          <p>ご案内に沿って、必要なデータをご提供いただきます。</p>
         </div>
-        <div class="process-item">
-          <div class="process-num">3</div>
-          <div class="process-text">データ受領後、1週間以内に診断レポートを作成</div>
+        <div class="process-arrow">&rarr;</div>
+        <div class="process-step">
+          <div class="process-step-num">3</div>
+          <div class="process-step-icon">
+            <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          </div>
+          <h3>レポート作成</h3>
+          <p>ご提供いただいたデータをもとにレポートを作成します。</p>
         </div>
-        <div class="process-item">
-          <div class="process-num">4</div>
-          <div class="process-text">レポートをお渡し＋オンラインで15分のご説明</div>
+        <div class="process-arrow">&rarr;</div>
+        <div class="process-step">
+          <div class="process-step-num">4</div>
+          <div class="process-step-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <h3>ご説明</h3>
+          <p>レポートのご説明と改善提案をオンラインで実施します。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Form -->
-  <section class="section section-alt">
+  <!-- Form with image -->
+  <section class="form-section">
     <div class="container">
-      <h2 class="section-title">第1期に参加する</h2>
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScJ0pdhvO5PIrv7PQNbNEz3i7DQ1iuyw3rx0zxCsut-DGVUIA/viewform?embedded=true" width="100%" height="900" frameborder="0" marginheight="0" marginwidth="0" style="max-width: 640px; margin: 0 auto; display: block;">読み込んでいます…</iframe>
-      <p class="text-center mt-24" style="color: var(--text-light); font-size: 0.9rem;">2営業日以内に、詳細のご案内をお送りします。</p>
+      <div class="form-layout">
+        <div class="form-left">
+          <img class="form-left-img" src="/images/clinic-room.png" alt="クリニック待合室">
+          <h2>第1期に参加する</h2>
+          <p>ミルカルテの未来を一緒に創るパートナーとして、ぜひご参加ください。</p>
+          <div class="form-left-meta">
+            <span>&#128101; 募集期間：限定数に達し次第終了</span>
+            <span>&#128336; 所要時間：約3分</span>
+          </div>
+        </div>
+        <div class="form-right">
+          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScJ0pdhvO5PIrv7PQNbNEz3i7DQ1iuyw3rx0zxCsut-DGVUIA/viewform?embedded=true" width="100%" height="900" frameborder="0" marginheight="0" marginwidth="0" style="max-width: 640px; display: block; border-radius: 12px;">読み込んでいます…</iframe>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- FAQ -->
+  <!-- FAQ with image -->
   <section class="section">
     <div class="container">
       <h2 class="section-title">よくある質問</h2>
-      <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-q">費用はかかりますか？</div>
-          <div class="faq-a">一切かかりません。第1期の先生方には完全無料でご参加いただけます。</div>
+      <div class="faq-layout">
+        <div class="faq-content">
+          <div class="faq-item-v2 open">
+            <div class="faq-q-v2" onclick="this.parentElement.classList.toggle('open')">費用はかかりますか？</div>
+            <div class="faq-a-v2">一切かかりません。第1期の先生方には完全無料でご参加いただけます。</div>
+          </div>
+          <div class="faq-item-v2">
+            <div class="faq-q-v2" onclick="this.parentElement.classList.toggle('open')">参画期間はどのくらいですか？</div>
+            <div class="faq-a-v2">3ヶ月を目安にしています。月1回15分のフィードバック面談にご協力をお願いしています。</div>
+          </div>
+          <div class="faq-item-v2">
+            <div class="faq-q-v2" onclick="this.parentElement.classList.toggle('open')">個人情報や患者データの取り扱いは安全ですか？</div>
+            <div class="faq-a-v2">患者名やカルテ番号などの個人情報は一切不要です。匿名化された集計データのみでレポートを作成します。</div>
+          </div>
+          <div class="faq-item-v2">
+            <div class="faq-q-v2" onclick="this.parentElement.classList.toggle('open')">何院くらい募集していますか？</div>
+            <div class="faq-a-v2">第1期は少数限定です。1院ずつ丁寧に向き合うため、人数を絞っています。</div>
+          </div>
+          <div class="faq-item-v2">
+            <div class="faq-q-v2" onclick="this.parentElement.classList.toggle('open')">参画終了後に契約の義務はありますか？</div>
+            <div class="faq-a-v2">ありません。継続をご希望される場合のみ、第1期限定価格で有料プランをご案内します。</div>
+          </div>
         </div>
-        <div class="faq-item">
-          <div class="faq-q">参画期間はどのくらいですか？</div>
-          <div class="faq-a">3ヶ月を目安にしています。月1回15分のフィードバック面談にご協力をお願いしています。</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">患者の個人情報は必要ですか？</div>
-          <div class="faq-a">患者名やカルテ番号などの個人情報は一切不要です。匿名化された集計データのみでレポートを作成します。</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">何院くらい募集していますか？</div>
-          <div class="faq-a">第1期は10院程度の少数限定です。1院ずつ丁寧に向き合うため、人数を絞っています。</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">参画終了後に契約の義務はありますか？</div>
-          <div class="faq-a">ありません。継続をご希望される場合のみ、第1期限定価格で有料プランをご案内します。</div>
+        <div class="faq-image">
+          <img src="/images/laptop-stethoscope.png" alt="ミルカルテのダッシュボードと聴診器" width="400" height="280">
         </div>
       </div>
     </div>
