@@ -2,8 +2,10 @@
   {
     "id": "seed-001",
     "text": "先生に、ひとつ質問です。去年あなたの院に通っていた患者さんは、今も通っていますか。「たぶん」ではなく、数字で答えられるでしょうか。",
-    "status": "approved",
-    "source": "x_posts_stock #6"
+    "status": "posted",
+    "source": "x_posts_stock #6",
+    "tweetId": "2055918537307255129",
+    "postedAt": "2026-05-17T07:49:11.164Z"
   },
   {
     "id": "seed-002",
