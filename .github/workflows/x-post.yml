@@ -9,7 +9,10 @@ on:
         options: [check, post]
         default: check
   schedule:
-    - cron: '0 3 * * *'   # 毎日 12:00 JST（承認済みがあれば1件投稿）
+    # 動的本数制御：各スロットで「承認待ち残数 >= しきい値」のときだけ1件投稿
+    - cron: '0 3 * * *'    # 12:00 JST スロット1（しきい値1）
+    - cron: '0 7 * * *'    # 16:00 JST スロット2（しきい値3）
+    - cron: '0 10 * * *'   # 19:00 JST スロット3（しきい値5）
 
 permissions:
   contents: write
@@ -30,7 +33,16 @@ jobs:
       - name: 依存関係のインストール
         run: npm ci --prefix x-bot
       - name: 実行
-        run: node x-bot/post.mjs "${{ inputs.mode || 'post' }}"
+        run: |
+          MODE="${{ inputs.mode || 'post' }}"
+          case "${{ github.event.schedule }}" in
+            "0 3 * * *")  THR=1 ;;
+            "0 7 * * *")  THR=3 ;;
+            "0 10 * * *") THR=5 ;;
+            *)            THR=1 ;;
+          esac
+          echo "mode=$MODE threshold=$THR"
+          node x-bot/post.mjs "$MODE" "$THR"
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}

@@ -60,12 +60,14 @@ let posted = [];
 try { posted = JSON.parse(readFileSync(POSTED_PATH, 'utf8')); } catch { posted = []; }
 const postedIds = new Set(posted.map(p => p.id));
 
-// 4. 「☑ かつ 台帳に未記録」の先頭1件
-const target = candidates.find(c => c.checked && !postedIds.has(c.id));
-if (!target) {
-  console.log('投稿対象なし（承認済みで未投稿の案がありません）。終了します。');
+// 4. 「☑ かつ 台帳に未記録」の案。残数がしきい値以上のときだけ投稿する（動的本数制御）
+const threshold = parseInt(process.argv[3] || '1', 10);
+const pending = candidates.filter(c => c.checked && !postedIds.has(c.id));
+if (pending.length < threshold) {
+  console.log(`承認待ち（☑・未投稿）は ${pending.length} 件。しきい値 ${threshold} 未満のため、このスロットは投稿しません。`);
   process.exit(0);
 }
+const target = pending[0];
 
 // 5. 投稿
 const res = await client.v2.tweet(target.text);
