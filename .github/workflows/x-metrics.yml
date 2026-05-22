@@ -1,0 +1,45 @@
+name: X metrics report
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'   # 09:00 JST（毎朝）
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: x-metrics
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 依存関係のインストール
+        run: npm ci --prefix x-bot
+      - name: メトリクス取得・レポート送信
+        run: node x-bot/metrics.mjs
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+      - name: メトリクス履歴をコミット
+        run: |
+          git config user.name "x-bot"
+          git config user.email "noreply@anthropic.com"
+          git add x-bot/metrics_history.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: x-bot メトリクス履歴を更新"
+            git pull --rebase origin main
+            git push
+          fi
