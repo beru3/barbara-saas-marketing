@@ -5,7 +5,7 @@
 // 重複防止：投稿済みIDは posted.json（台帳）に記録。Issueでも承認待ち→投稿済みへ移動。
 // この二重管理に加え、X APIの同一本文拒否で、重複投稿は構造的に起きない。
 import { TwitterApi } from 'twitter-api-v2';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 
@@ -63,6 +63,12 @@ const postedIds = new Set(posted.map(p => p.id));
 // 4. 「☑ かつ 台帳に未記録」の案。残数がしきい値以上のときだけ投稿する（動的本数制御）
 const threshold = parseInt(process.argv[3] || '1', 10);
 const pending = candidates.filter(c => c.checked && !postedIds.has(c.id));
+
+// GITHUB_OUTPUT に残数を書き出す（ワークフローのメール通知判定用）
+if (process.env.GITHUB_OUTPUT) {
+  appendFileSync(process.env.GITHUB_OUTPUT, `remaining=${pending.length}\n`);
+}
+
 if (pending.length < threshold) {
   console.log(`承認待ち（☑・未投稿）は ${pending.length} 件。しきい値 ${threshold} 未満のため、このスロットは投稿しません。`);
   process.exit(0);
@@ -75,6 +81,10 @@ const tweetId = res.data.id;
 const url = `https://x.com/${account}/status/${tweetId}`;
 
 // 6. 台帳へ即記録（重複防止の要）
+// 投稿後の残数を更新（GITHUB_OUTPUT は投稿前に書いたので上書き）
+if (process.env.GITHUB_OUTPUT) {
+  appendFileSync(process.env.GITHUB_OUTPUT, `remaining=${pending.length - 1}\n`);
+}
 posted.push({ id: target.id, text: target.text, tweetId, postedAt: new Date().toISOString() });
 writeFileSync(POSTED_PATH, JSON.stringify(posted, null, 2) + '\n');
 

@@ -33,6 +33,7 @@ jobs:
       - name: 依存関係のインストール
         run: npm ci --prefix x-bot
       - name: 実行
+        id: post
         run: |
           MODE="${{ inputs.mode || 'post' }}"
           case "${{ github.event.schedule }}" in
@@ -49,6 +50,28 @@ jobs:
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 承認リマインドメール
+        if: >-
+          github.event.schedule == '0 3 * * *'
+          && steps.post.outputs.remaining != ''
+          && steps.post.outputs.remaining < 3
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "【X投稿bot】承認ストックが残り${{ steps.post.outputs.remaining }}件です"
+          to: ${{ secrets.GMAIL_USERNAME }}
+          from: X投稿bot <${{ secrets.GMAIL_USERNAME }}>
+          body: |
+            承認済み・未投稿の投稿案が残り ${{ steps.post.outputs.remaining }} 件です。
+            このままだと近くXへの投稿が止まります。
+
+            Issue を開いてチェックを入れてください:
+            https://github.com/${{ github.repository }}/issues/1
+
       - name: 投稿台帳をコミット
         if: ${{ (inputs.mode || 'post') == 'post' }}
         run: |
