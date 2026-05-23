@@ -103,5 +103,120 @@
         "quotes": 0
       }
     ]
+  },
+  {
+    "date": "2026-05-23",
+    "metrics": [
+      {
+        "id": "seed-001",
+        "tweetId": "2055918537307255129",
+        "text": "先生に、ひとつ質問です。去年あなたの院に通っていた患者さんは、今も通っていますか",
+        "impressions": 0,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "seed-002",
+        "tweetId": "2055982596807385191",
+        "text": "新患を増やすことばかり考えていませんか。新しい患者さんを1人集めるコストは約6,",
+        "impressions": 0,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "gen-20260517-1",
+        "tweetId": "2055992314766467304",
+        "text": "「日経平均が史上最高値を更新」というニュース。けれど「景気は悪くなる」と感じる人",
+        "impressions": 0,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "gen-20260517-4",
+        "tweetId": "2056267731310190724",
+        "text": "6月1日から診療報酬が改定されます。収入面の変化に目が向きますが、もう一つ確認し",
+        "impressions": 0,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "gen-20260517-3",
+        "tweetId": "2056330926427087235",
+        "text": "まもなく特定健診のシーズンです。健診で「数値が気になりますね」と言われて来院した",
+        "impressions": 0,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "gen-20260517-2",
+        "tweetId": "2056628061857018279",
+        "text": "電子カルテやレセコンの補助金（デジタル化・AI導入補助金）が話題です。ただ、ツー",
+        "impressions": 0,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "seed-003",
+        "tweetId": "2056685776046284821",
+        "text": "新患が来た。うれしい。でも、その同じ月に何人が静かに去ったかは、数えていない。多",
+        "impressions": 0,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "gen-20260517-5",
+        "tweetId": "2056990435860525069",
+        "text": "「患者の生涯価値」という言葉があります。むずかしく聞こえますが、要するに「1人の",
+        "impressions": 0,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "gen-20260517-6",
+        "tweetId": "2057354127454158909",
+        "text": "患者さんに「また来てください」と伝える方法は、電話・メール・LINE・ハガキとあ",
+        "impressions": 2,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "gen-20260518-2",
+        "tweetId": "2057715425337630794",
+        "text": "レセコンには毎日データが積み上がっています。来院履歴も疾患も単価も、全部入ってい",
+        "impressions": 6,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      },
+      {
+        "id": "gen-20260519-1",
+        "tweetId": "2057769761329623171",
+        "text": "6月の診療報酬改定から、継続的に患者を診ているかどうかが、より評価されます。「定",
+        "impressions": 9,
+        "likes": 0,
+        "retweets": 0,
+        "replies": 0,
+        "quotes": 0
+      }
+    ]
   }
 ]
