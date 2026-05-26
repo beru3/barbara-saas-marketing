@@ -1,8 +1,8 @@
 // X自動投稿スクリプト
 //   node post.mjs check  … 認証確認のみ（投稿しない）
-//   node post.mjs post   … 承認Issueの☑済み・未投稿の案を1件投稿する
+//   node post.mjs post   … Issueの投稿キュー内の未投稿分を1件投稿する（承認不要）
 //
-// 重複防止：投稿済みIDは posted.json（台帳）に記録。Issueでも承認待ち→投稿済みへ移動。
+// 重複防止：投稿済みIDは posted.json（台帳）に記録。Issueでも投稿キュー→投稿済みへ移動。
 // この二重管理に加え、X APIの同一本文拒否で、重複投稿は構造的に起きない。
 import { TwitterApi } from 'twitter-api-v2';
 import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
@@ -43,15 +43,15 @@ const gh = (args, opts = {}) => execSync('gh ' + args, { encoding: 'utf8', ...op
 const body = gh(`issue view ${issueNumber} --repo ${repo} --json body -q .body`);
 const lines = body.replace(/\r\n/g, '\n').split('\n');
 
-// 2. 「## 承認待ち」内のチェック項目を抽出
+// 2. 「## 投稿キュー」または「## 承認待ち」内の項目を抽出（チェック状態は無視）
 let sec = '';
-const candidates = []; // { lineIndex, checked, id, text }
+const candidates = []; // { lineIndex, id, text }
 lines.forEach((ln, i) => {
-  if (/^##\s*承認待ち\s*$/.test(ln)) { sec = 'pending'; return; }
+  if (/^##\s*(投稿キュー|承認待ち)\s*$/.test(ln)) { sec = 'pending'; return; }
   if (/^##\s/.test(ln)) { sec = ''; return; }
   if (sec === 'pending') {
-    const m = ln.match(/^- \[([ xX])\]\s+`([^`]+)`\s+(.+)$/);
-    if (m) candidates.push({ lineIndex: i, checked: m[1].toLowerCase() === 'x', id: m[2], text: m[3].trim() });
+    const m = ln.match(/^- \[[ xX]\]\s+`([^`]+)`\s+(.+)$/);
+    if (m) candidates.push({ lineIndex: i, id: m[1], text: m[2].trim() });
   }
 });
 
@@ -60,9 +60,9 @@ let posted = [];
 try { posted = JSON.parse(readFileSync(POSTED_PATH, 'utf8')); } catch { posted = []; }
 const postedIds = new Set(posted.map(p => p.id));
 
-// 4. 「☑ かつ 台帳に未記録」の案。残数がしきい値以上のときだけ投稿する（動的本数制御）
+// 4. 「台帳に未記録」の案。残数がしきい値以上のときだけ投稿する（動的本数制御）
 const threshold = parseInt(process.argv[3] || '1', 10);
-const pending = candidates.filter(c => c.checked && !postedIds.has(c.id));
+const pending = candidates.filter(c => !postedIds.has(c.id));
 
 // GITHUB_OUTPUT に残数を書き出す（ワークフローのメール通知判定用）
 if (process.env.GITHUB_OUTPUT) {
@@ -70,7 +70,7 @@ if (process.env.GITHUB_OUTPUT) {
 }
 
 if (pending.length < threshold) {
-  console.log(`承認待ち（☑・未投稿）は ${pending.length} 件。しきい値 ${threshold} 未満のため、このスロットは投稿しません。`);
+  console.log(`投稿キュー（未投稿）は ${pending.length} 件。しきい値 ${threshold} 未満のため、このスロットは投稿しません。`);
   process.exit(0);
 }
 const target = pending[0];
