@@ -1,0 +1,56 @@
+name: X engage
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'engage（フォロー・いいね・候補生成） / replies（承認済みリプライ投稿）'
+        type: choice
+        options: [engage, replies]
+        default: engage
+  schedule:
+    - cron: '0 1 * * *'   # 10:00 JST — エンゲージメント（フォロー・いいね・候補）
+    - cron: '0 5 * * *'   # 14:00 JST — 承認済みリプライ投稿
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: x-engage
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci --prefix x-bot
+      - name: 実行
+        run: |
+          case "${{ github.event.schedule }}" in
+            "0 1 * * *")  MODE=engage ;;
+            "0 5 * * *")  MODE=replies ;;
+            *)            MODE="${{ inputs.mode || 'engage' }}" ;;
+          esac
+          echo "mode=$MODE"
+          node x-bot/engage.mjs "$MODE"
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 履歴をコミット
+        run: |
+          git config user.name "x-bot"
+          git config user.email "noreply@anthropic.com"
+          git add x-bot/engage_history.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: x-bot エンゲージメント履歴を更新"
+            git pull --rebase origin main
+            git push
+          fi

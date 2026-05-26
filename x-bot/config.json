@@ -2,5 +2,17 @@
   "repo": "beru3/barbara-saas-marketing",
   "issueNumber": 1,
   "metricsIssueNumber": 2,
-  "account": "furuie_akihiro"
+  "engageIssueNumber": 3,
+  "account": "furuie_akihiro",
+  "engageKeywords": [
+    "クリニック経営",
+    "開業医",
+    "診療報酬改定",
+    "患者離脱",
+    "医院経営",
+    "クリニック開業",
+    "レセコン"
+  ],
+  "followLimit": 5,
+  "likeLimit": 10
 }
