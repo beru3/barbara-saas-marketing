@@ -138,6 +138,10 @@ if (process.env.GMAIL_USERNAME && process.env.GMAIL_APP_PASSWORD) {
       `[${m.id}] ${m.text}…\n  imp: ${m.impressions} / ♥: ${m.likes} / RT: ${m.retweets} / 返信: ${m.replies}`
     ),
     '',
+    '--- 広告パフォーマンス（要手動確認） ---',
+    '広告ダッシュボード: https://ads.x.com',
+    '※ Ads APIはFree tierで利用不可のため、CPC・CTR等は上記で確認してください。',
+    '',
     `Issue: https://github.com/${CONFIG.repo}/issues/${metricsIssueNumber}`,
   ].join('\n');
 

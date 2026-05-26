@@ -8,7 +8,7 @@
 //   GH_TOKEN（Issue更新用）
 import { TwitterApi } from 'twitter-api-v2';
 import OpenAI from 'openai';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 
@@ -369,6 +369,22 @@ async function postApprovedReplies() {
     }
   }
 
+  // 残りの承認済み（未投稿）リプライ数をカウント
+  let remainingApproved = 0;
+  for (const c of comments) {
+    for (const ln of c.body.split('\n')) {
+      const m2 = ln.match(/^- \[[xX]\]\s+`(\d+)`/);
+      if (m2 && !history.repliedTweets?.includes(m2[1])) {
+        remainingApproved++;
+      }
+    }
+  }
+  remainingApproved -= posted; // 今回投稿した分を引く
+
+  if (process.env.GITHUB_OUTPUT) {
+    appendFileSync(process.env.GITHUB_OUTPUT, `reply_remaining=${remainingApproved}\n`);
+  }
+
   writeFileSync(ENGAGE_PATH, JSON.stringify(history, null, 2) + '\n');
-  console.log(`リプライ投稿: ${posted}件`);
+  console.log(`リプライ投稿: ${posted}件（残ストック: ${remainingApproved}件）`);
 }
