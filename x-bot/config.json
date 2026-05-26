@@ -14,5 +14,9 @@
     "レセコン"
   ],
   "followLimit": 5,
-  "likeLimit": 10
+  "likeLimit": 10,
+  "followProfileKeywords": [
+    "院長", "内科", "クリニック", "開業", "整形外科",
+    "診療所", "医師", "医院", "ドクター"
+  ]
 }

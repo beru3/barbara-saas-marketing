@@ -56,6 +56,12 @@ const LIKE_LIMIT = CONFIG.likeLimit || 10;
 // 自分のアカウントを除外
 const EXCLUDE_IDS = new Set([myId]);
 
+// フォロー対象のプロフィールフィルター
+const FOLLOW_PROFILE_KEYWORDS = CONFIG.followProfileKeywords || [
+  '院長', '内科', 'クリニック', '開業', '整形外科',
+  '診療所', '医師', '医院', 'ドクター',
+];
+
 // 1. キーワード検索でツイートを収集
 console.log('=== ツイート検索 ===');
 const allTweets = [];
@@ -99,10 +105,19 @@ for (const t of uniqueTweets) {
 }
 
 let followCount = 0;
+let skippedCount = 0;
 const todayFollowed = [];
 for (const [userId, user] of uniqueAuthors) {
   if (followCount >= FOLLOW_LIMIT) break;
   if (followedSet.has(userId)) continue;
+
+  // プロフィールフィルター: descriptionに対象キーワードを含むかチェック
+  const desc = (user.description || '').toLowerCase() + (user.name || '').toLowerCase();
+  const matchesProfile = FOLLOW_PROFILE_KEYWORDS.some(kw => desc.includes(kw.toLowerCase()));
+  if (!matchesProfile) {
+    skippedCount++;
+    continue;
+  }
 
   try {
     await client.v2.follow(myId, userId);
@@ -121,7 +136,7 @@ for (const [userId, user] of uniqueAuthors) {
     console.log(`  ✗ @${user.username}: ${e?.data?.detail || e.message}`);
   }
 }
-console.log(`フォロー: ${followCount}件\n`);
+console.log(`フォロー: ${followCount}件（プロフィール不一致でスキップ: ${skippedCount}件）\n`);
 
 // 3. 自動いいね（エンゲージメントが高いツイート優先）
 console.log('=== 自動いいね ===');
