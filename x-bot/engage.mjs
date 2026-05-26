@@ -1,11 +1,13 @@
 // Xエンゲージメントbot
-//   node engage.mjs           … フォロー・いいね・リプライ候補生成
+//   node engage.mjs           … フォロー・いいね・引用RT・リプライ候補生成
 //   node engage.mjs replies   … 承認済みリプライを投稿
 //
 // 必要な環境変数:
 //   X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET
+//   DEEPSEEK_API_KEY（引用RTコメント生成用）
 //   GH_TOKEN（Issue更新用）
 import { TwitterApi } from 'twitter-api-v2';
+import OpenAI from 'openai';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
@@ -35,6 +37,7 @@ try { history = JSON.parse(readFileSync(ENGAGE_PATH, 'utf8')); } catch { history
 if (!history.followed) history.followed = [];
 if (!history.liked) history.liked = [];
 if (!history.replyCandidateIds) history.replyCandidateIds = [];
+if (!history.quotedTweetIds) history.quotedTweetIds = [];
 
 const followedSet = new Set(history.followed.map(f => f.userId));
 const likedSet = new Set(history.liked.map(l => l.tweetId));
@@ -178,7 +181,83 @@ for (const t of likeable) {
 }
 console.log(`いいね: ${likeCount}件\n`);
 
-// 4. リプライ候補をIssueに追記
+// 4. 引用RT（DeepSeekでコメント生成→自動投稿、1日2件上限）
+console.log('=== 引用RT ===');
+const QUOTE_LIMIT = CONFIG.quoteLimit || 2;
+const quotedSet = new Set(history.quotedTweetIds);
+
+if (process.env.DEEPSEEK_API_KEY) {
+  const ai = new OpenAI({
+    baseURL: 'https://api.deepseek.com',
+    apiKey: process.env.DEEPSEEK_API_KEY,
+  });
+
+  // 引用RT候補: エンゲージメントが高く、クリニック経営に関連するツイート
+  const quoteCandidates = uniqueTweets
+    .filter(t => {
+      const score = (t.public_metrics?.like_count || 0) + (t.public_metrics?.retweet_count || 0) * 3;
+      return score >= 3 && !quotedSet.has(t.id) && !likedSet.has(t.id);
+    })
+    .sort((a, b) => {
+      const scoreA = (a.public_metrics?.like_count || 0) + (a.public_metrics?.retweet_count || 0) * 3;
+      const scoreB = (b.public_metrics?.like_count || 0) + (b.public_metrics?.retweet_count || 0) * 3;
+      return scoreB - scoreA;
+    })
+    .slice(0, QUOTE_LIMIT);
+
+  let quoteCount = 0;
+  for (const t of quoteCandidates) {
+    const user = t._user;
+    const tweetUrl = `https://x.com/${user?.username || 'i'}/status/${t.id}`;
+
+    try {
+      const res = await ai.chat.completions.create({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: `あなたはクリニック経営に詳しい「古家聡大」としてXの引用RTコメントを書きます。
+ルール:
+- 50〜100文字程度の短いコメント
+- 「先生」と呼ぶ口調
+- 押し売りしない。共感・補足・問いかけのいずれか
+- 「ミルカルテ」というサービス名は絶対に出さない
+- コメント本文のみ出力（引用元URLは含めない）`,
+          },
+          {
+            role: 'user',
+            content: `以下のツイートに引用RTコメントを1つだけ書いてください。\n\n@${user?.username}: ${t.text}`,
+          },
+        ],
+        temperature: 0.8,
+        max_tokens: 200,
+      });
+
+      let comment = res.choices[0].message.content.trim();
+      // 先頭・末尾の引用符を除去
+      comment = comment.replace(/^["「『]|["」』]$/g, '');
+
+      // 引用RTとして投稿（quote_tweet_id を使用）
+      const posted = await client.v2.tweet(comment, {
+        quote_tweet_id: t.id,
+      });
+      const postedUrl = `https://x.com/${CONFIG.account}/status/${posted.data.id}`;
+      console.log(`  ✓ 引用RT: @${user?.username} → ${comment.slice(0, 50)}…`);
+      console.log(`    ${postedUrl}`);
+
+      history.quotedTweetIds.push(t.id);
+      quotedSet.add(t.id);
+      quoteCount++;
+    } catch (e) {
+      console.log(`  ✗ 引用RT失敗 (@${user?.username}): ${e?.data?.detail || e.message}`);
+    }
+  }
+  console.log(`引用RT: ${quoteCount}件\n`);
+} else {
+  console.log('DEEPSEEK_API_KEY未設定のためスキップ\n');
+}
+
+// 5. リプライ候補をIssueに追記
 // エンゲージメントが高く、かつまだ候補に挙げていないツイートを選ぶ
 console.log('=== リプライ候補 ===');
 const replyCandidates = uniqueTweets
@@ -227,9 +306,12 @@ cutoff.setDate(cutoff.getDate() - 90);
 const cutoffStr = cutoff.toISOString();
 history.followed = history.followed.filter(f => f.followedAt >= cutoffStr);
 history.liked = history.liked.filter(l => l.likedAt >= cutoffStr);
-// replyCandidateIds は直近500件だけ保持
+// replyCandidateIds, quotedTweetIds は直近500件だけ保持
 if (history.replyCandidateIds.length > 500) {
   history.replyCandidateIds = history.replyCandidateIds.slice(-500);
+}
+if (history.quotedTweetIds.length > 500) {
+  history.quotedTweetIds = history.quotedTweetIds.slice(-500);
 }
 writeFileSync(ENGAGE_PATH, JSON.stringify(history, null, 2) + '\n');
 
