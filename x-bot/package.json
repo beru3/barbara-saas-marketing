@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "nodemailer": "^8.0.7",
+    "openai": "^6.39.0",
     "twitter-api-v2": "^1.29.0"
   }
 }
