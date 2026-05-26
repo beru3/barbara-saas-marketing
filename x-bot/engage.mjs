@@ -194,9 +194,10 @@ if (replyCandidates.length > 0) {
 
   // Issue #3 にコメント追記
   const engageIssueNumber = CONFIG.engageIssueNumber || 3;
-  const commentBody = lines.join('\n').replace(/"/g, '\\"');
+  const commentBody = lines.join('\n');
   try {
-    gh(`issue comment ${engageIssueNumber} --repo ${CONFIG.repo} --body "${commentBody}"`);
+    writeFileSync('/tmp/engage_comment.md', commentBody);
+    gh(`issue comment ${engageIssueNumber} --repo ${CONFIG.repo} --body-file /tmp/engage_comment.md`);
     console.log(`Issue #${engageIssueNumber} にリプライ候補 ${replyCandidates.length}件を追記`);
   } catch (e) {
     console.log('Issue更新エラー:', e.message);
