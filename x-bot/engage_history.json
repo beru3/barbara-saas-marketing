@@ -191,5 +191,6 @@
     "2059103360637358397",
     "2059072669115634144"
   ],
-  "quotedTweetIds": []
+  "quotedTweetIds": [],
+  "autoRepliedTweetIds": []
 }
