@@ -50,8 +50,12 @@ jobs:
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: 承認リマインドメール（テスト中：条件一時除去）
-        run: node x-bot/notify-low-stock.mjs "1"
+      - name: 承認リマインドメール
+        if: >-
+          github.event.schedule == '0 3 * * *'
+          && steps.post.outputs.remaining != ''
+          && steps.post.outputs.remaining < 3
+        run: node x-bot/notify-low-stock.mjs "${{ steps.post.outputs.remaining }}"
         env:
           GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
