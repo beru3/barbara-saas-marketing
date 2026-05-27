@@ -50,6 +50,14 @@ jobs:
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: ストック不足時に投稿文を自動生成
+        if: >-
+          steps.post.outputs.remaining != ''
+          && steps.post.outputs.remaining < 5
+        run: gh workflow run x-generate.yml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: 承認リマインドメール
         if: >-
           github.event.schedule == '0 3 * * *'
