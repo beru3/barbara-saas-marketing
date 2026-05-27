@@ -50,22 +50,11 @@ jobs:
         if: >-
           steps.run.outputs.reply_remaining != ''
           && steps.run.outputs.reply_remaining < 3
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.GMAIL_USERNAME }}
-          password: ${{ secrets.GMAIL_APP_PASSWORD }}
-          subject: "【X engage bot】承認済みリプライが残り${{ steps.run.outputs.reply_remaining }}件です"
-          to: ${{ secrets.GMAIL_USERNAME }}
-          from: X engage bot <${{ secrets.GMAIL_USERNAME }}>
-          body: |
-            承認済みリプライのストックが残り ${{ steps.run.outputs.reply_remaining }} 件です。
-            0件になるとリプライ投稿が止まります。
-
-            Issue #3 を開いてリプライ候補にチェックを入れてください:
-            https://github.com/${{ github.repository }}/issues/3
+        run: node x-bot/notify-reply-low.mjs "${{ steps.run.outputs.reply_remaining }}"
+        env:
+          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          REPO: ${{ github.repository }}
 
       - name: 履歴をコミット
         run: |
