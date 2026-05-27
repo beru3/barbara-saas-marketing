@@ -9,10 +9,9 @@ on:
         options: [check, post]
         default: check
   schedule:
-    # 動的本数制御：各スロットで「承認待ち残数 >= しきい値」のときだけ1件投稿
-    - cron: '0 3 * * *'    # 12:00 JST スロット1（しきい値1）
-    - cron: '0 7 * * *'    # 16:00 JST スロット2（しきい値3）
-    - cron: '0 10 * * *'   # 19:00 JST スロット3（しきい値5）
+    # 1日1〜2投稿：院長の活動時間帯に集中
+    - cron: '0 3 * * *'    # 12:00 JST 昼休み（メインスロット）
+    - cron: '0 11 * * *'   # 20:00 JST 診療後（サブスロット）
 
 permissions:
   contents: write
@@ -37,9 +36,8 @@ jobs:
         run: |
           MODE="${{ inputs.mode || 'post' }}"
           case "${{ github.event.schedule }}" in
-            "0 3 * * *")  THR=1 ;;
-            "0 7 * * *")  THR=3 ;;
-            "0 10 * * *") THR=5 ;;
+            "0 3 * * *")  THR=1 ;;   # 昼: ストック1件以上で投稿
+            "0 11 * * *") THR=3 ;;   # 夜: ストック3件以上で投稿
             *)            THR=1 ;;
           esac
           echo "mode=$MODE threshold=$THR"

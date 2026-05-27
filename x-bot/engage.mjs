@@ -38,9 +38,16 @@ if (!history.followed) history.followed = [];
 if (!history.liked) history.liked = [];
 if (!history.replyCandidateIds) history.replyCandidateIds = [];
 if (!history.quotedTweetIds) history.quotedTweetIds = [];
+if (!history.autoRepliedTweetIds) history.autoRepliedTweetIds = [];
 
 const followedSet = new Set(history.followed.map(f => f.userId));
 const likedSet = new Set(history.liked.map(l => l.tweetId));
+
+// --- 自動リプライモード（自分の投稿への返信に自動で返す） ---
+if (mode === 'auto-reply') {
+  await autoReplyToMentions();
+  process.exit(0);
+}
 
 // --- 承認済みリプライの投稿モード ---
 if (mode === 'replies') {
@@ -387,4 +394,97 @@ async function postApprovedReplies() {
 
   writeFileSync(ENGAGE_PATH, JSON.stringify(history, null, 2) + '\n');
   console.log(`リプライ投稿: ${posted}件（残ストック: ${remainingApproved}件）`);
+}
+
+// --- 自分の投稿への返信を検知して自動で返信 ---
+async function autoReplyToMentions() {
+  console.log('=== 自動リプライ ===');
+  const AUTO_REPLY_LIMIT = CONFIG.autoReplyLimit || 5;
+  const autoRepliedSet = new Set(history.autoRepliedTweetIds);
+
+  if (!process.env.DEEPSEEK_API_KEY) {
+    console.log('DEEPSEEK_API_KEY未設定のためスキップ');
+    return;
+  }
+  const ai = new OpenAI({
+    baseURL: 'https://api.deepseek.com',
+    apiKey: process.env.DEEPSEEK_API_KEY,
+  });
+
+  // 自分宛てのメンション（リプライ）を取得
+  let mentions;
+  try {
+    mentions = await client.v2.search(
+      `to:${CONFIG.account} -from:${CONFIG.account} -is:retweet`,
+      {
+        max_results: 20,
+        'tweet.fields': 'author_id,in_reply_to_user_id,conversation_id,text,created_at',
+        expansions: 'author_id',
+        'user.fields': 'username,name',
+      },
+    );
+  } catch (e) {
+    console.log('メンション取得エラー:', e?.data?.detail || e.message);
+    return;
+  }
+
+  const tweets = mentions.data?.data || [];
+  const users = new Map((mentions.data?.includes?.users || []).map(u => [u.id, u]));
+  console.log(`メンション: ${tweets.length}件`);
+
+  // 自分の投稿へのリプライだけを対象にする
+  const targets = tweets.filter(
+    t => t.in_reply_to_user_id === myId && !autoRepliedSet.has(t.id),
+  );
+  console.log(`未返信のリプライ: ${targets.length}件`);
+
+  let replyCount = 0;
+  for (const t of targets) {
+    if (replyCount >= AUTO_REPLY_LIMIT) break;
+    const user = users.get(t.author_id);
+    const username = user?.username || '?';
+
+    try {
+      const res = await ai.chat.completions.create({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: `あなたは古家聡大（ふるいえあきひろ）としてXのリプライに返信します。
+ルール:
+- 50〜100文字の短い返信
+- 感謝・共感・問いかけのいずれか。押し売りしない
+- 「ミルカルテ」というサービス名は絶対に出さない
+- 返信本文のみ出力`,
+          },
+          {
+            role: 'user',
+            content: `@${username} からのリプライ: ${t.text}\n\n返信を1つだけ書いてください。`,
+          },
+        ],
+        temperature: 0.8,
+        max_tokens: 200,
+      });
+
+      let comment = res.choices[0].message.content.trim();
+      comment = comment.replace(/^["「『]|["」』]$/g, '');
+
+      await client.v2.tweet(comment, {
+        reply: { in_reply_to_tweet_id: t.id },
+      });
+      console.log(`  ✓ @${username} に返信: ${comment.slice(0, 60)}…`);
+      history.autoRepliedTweetIds.push(t.id);
+      autoRepliedSet.add(t.id);
+      replyCount++;
+    } catch (e) {
+      console.log(`  ✗ @${username} への返信失敗: ${e?.data?.detail || e.message}`);
+    }
+  }
+
+  // 履歴を500件に刈り込み
+  if (history.autoRepliedTweetIds.length > 500) {
+    history.autoRepliedTweetIds = history.autoRepliedTweetIds.slice(-500);
+  }
+  writeFileSync(ENGAGE_PATH, JSON.stringify(history, null, 2) + '\n');
+  console.log(`自動リプライ: ${replyCount}件\n`);
 }

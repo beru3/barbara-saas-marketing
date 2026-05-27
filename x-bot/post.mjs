@@ -75,10 +75,28 @@ if (pending.length < threshold) {
 }
 const target = pending[0];
 
-// 5. 投稿
-const res = await client.v2.tweet(target.text);
+// 5. 投稿（URLはリプライに分離してリーチ低下を回避）
+const urlRegex = /(https?:\/\/\S+)/g;
+const extractedUrls = target.text.match(urlRegex);
+const mainText = extractedUrls
+  ? target.text.replace(urlRegex, '').replace(/\s*→\s*$/, '').trim()
+  : target.text;
+const tweetText = mainText.length >= 10 ? mainText : target.text;
+
+const res = await client.v2.tweet(tweetText);
 const tweetId = res.data.id;
 const url = `https://x.com/${account}/status/${tweetId}`;
+
+if (extractedUrls && mainText.length >= 10) {
+  try {
+    await client.v2.tweet(extractedUrls.join('\n'), {
+      reply: { in_reply_to_tweet_id: tweetId },
+    });
+    console.log(`リンクをリプライに分離: ${extractedUrls.join(', ')}`);
+  } catch (e) {
+    console.log(`リンクリプライ失敗（本文は投稿済み）: ${e?.data?.detail || e.message}`);
+  }
+}
 
 // 6. 台帳へ即記録（重複防止の要）
 // 投稿後の残数を更新（GITHUB_OUTPUT は投稿前に書いたので上書き）

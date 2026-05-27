@@ -4,13 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'engage（フォロー・いいね・候補生成） / replies（承認済みリプライ投稿）'
+        description: 'engage / replies / auto-reply'
         type: choice
-        options: [engage, replies]
+        options: [engage, replies, auto-reply]
         default: engage
   schedule:
-    - cron: '0 1 * * *'   # 10:00 JST — エンゲージメント（フォロー・いいね・候補）
-    - cron: '0 5 * * *'   # 14:00 JST — 承認済みリプライ投稿
+    - cron: '0 1 * * *'    # 10:00 JST — エンゲージメント（フォロー・いいね・候補）
+    - cron: '0 5 * * *'    # 14:00 JST — 承認済みリプライ投稿
+    - cron: '0 8 * * *'    # 17:00 JST — 自動リプライ（午後の返信を拾う）
+    - cron: '0 12 * * *'   # 21:00 JST — 自動リプライ（夜の返信を拾う）
 
 permissions:
   contents: write
@@ -33,9 +35,11 @@ jobs:
         id: run
         run: |
           case "${{ github.event.schedule }}" in
-            "0 1 * * *")  MODE=engage ;;
-            "0 5 * * *")  MODE=replies ;;
-            *)            MODE="${{ inputs.mode || 'engage' }}" ;;
+            "0 1 * * *")   MODE=engage ;;
+            "0 5 * * *")   MODE=replies ;;
+            "0 8 * * *")   MODE=auto-reply ;;
+            "0 12 * * *")  MODE=auto-reply ;;
+            *)             MODE="${{ inputs.mode || 'engage' }}" ;;
           esac
           echo "mode=$MODE"
           node x-bot/engage.mjs "$MODE"
