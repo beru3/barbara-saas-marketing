@@ -1,14 +1,13 @@
 // Xエンゲージメントbot
-//   node engage.mjs           … フォロー・いいね・引用RT・リプライ候補生成
-//   node engage.mjs replies   … 承認済みリプライを投稿
+//   node engage.mjs              … フォロー・いいね・引用RT・リプライ（すべて自動）
+//   node engage.mjs auto-reply   … 自分の投稿への返信に自動で返す
 //
 // 必要な環境変数:
 //   X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET
-//   DEEPSEEK_API_KEY（引用RTコメント生成用）
-//   GH_TOKEN（Issue更新用）
+//   DEEPSEEK_API_KEY（引用RT・リプライのコメント生成用）
 import { TwitterApi } from 'twitter-api-v2';
 import OpenAI from 'openai';
-import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 
@@ -49,11 +48,7 @@ if (mode === 'auto-reply') {
   process.exit(0);
 }
 
-// --- 承認済みリプライの投稿モード ---
-if (mode === 'replies') {
-  await postApprovedReplies();
-  process.exit(0);
-}
+// --- (replies モードは廃止: リプライは engage 時に自動投稿) ---
 
 // --- engage モード ---
 const KEYWORDS = CONFIG.engageKeywords || [
@@ -264,9 +259,9 @@ if (process.env.DEEPSEEK_API_KEY) {
   console.log('DEEPSEEK_API_KEY未設定のためスキップ\n');
 }
 
-// 5. リプライ候補をIssueに追記
-// エンゲージメントが高く、かつまだ候補に挙げていないツイートを選ぶ
-console.log('=== リプライ候補 ===');
+// 5. 自動リプライ（DeepSeekで生成→即投稿）
+console.log('=== 自動リプライ（他アカウント） ===');
+const REPLY_LIMIT = CONFIG.replyLimit || 3;
 const replyCandidates = uniqueTweets
   .filter(t => {
     const score = (t.public_metrics?.like_count || 0) + (t.public_metrics?.reply_count || 0) * 3;
@@ -277,34 +272,58 @@ const replyCandidates = uniqueTweets
     const scoreB = (b.public_metrics?.like_count || 0) + (b.public_metrics?.reply_count || 0) * 3;
     return scoreB - scoreA;
   })
-  .slice(0, 3);
+  .slice(0, REPLY_LIMIT);
 
-if (replyCandidates.length > 0) {
-  const today = new Date().toISOString().slice(0, 10);
-  const lines = [`\n### ${today} のリプライ候補\n`];
+if (replyCandidates.length > 0 && process.env.DEEPSEEK_API_KEY) {
+  const replyAi = new OpenAI({
+    baseURL: 'https://api.deepseek.com',
+    apiKey: process.env.DEEPSEEK_API_KEY,
+  });
 
+  let replyCount = 0;
   for (const t of replyCandidates) {
     const user = t._user;
-    const url = `https://x.com/${user?.username || 'i'}/status/${t.id}`;
-    lines.push(`- [ ] \`${t.id}\` @${user?.username || '?'}: ${t.text?.slice(0, 80)}…`);
-    lines.push(`  - 元ツイート: ${url}`);
-    lines.push(`  - リプライ案: <!-- ここにリプライ文を記入して☑ -->`);
-    lines.push('');
     history.replyCandidateIds.push(t.id);
-  }
 
-  // Issue #3 にコメント追記
-  const engageIssueNumber = CONFIG.engageIssueNumber || 3;
-  const commentBody = lines.join('\n');
-  try {
-    writeFileSync('/tmp/engage_comment.md', commentBody);
-    gh(`issue comment ${engageIssueNumber} --repo ${CONFIG.repo} --body-file /tmp/engage_comment.md`);
-    console.log(`Issue #${engageIssueNumber} にリプライ候補 ${replyCandidates.length}件を追記`);
-  } catch (e) {
-    console.log('Issue更新エラー:', e.message);
+    try {
+      const res = await replyAi.chat.completions.create({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: `あなたは古家聡大（ふるいえあきひろ）としてXのリプライを書きます。
+ルール:
+- 50〜100文字の短い返信
+- 共感・補足・問いかけのいずれか。押し売りしない
+- 「ミルカルテ」というサービス名は絶対に出さない
+- 返信本文のみ出力（@メンションは含めない）`,
+          },
+          {
+            role: 'user',
+            content: `以下のツイートにリプライを1つだけ書いてください。\n\n@${user?.username}: ${t.text}`,
+          },
+        ],
+        temperature: 0.8,
+        max_tokens: 200,
+      });
+
+      let comment = res.choices[0].message.content.trim();
+      comment = comment.replace(/^["「『]|["」』]$/g, '');
+
+      await client.v2.tweet(comment, {
+        reply: { in_reply_to_tweet_id: t.id },
+      });
+      console.log(`  ✓ リプライ: @${user?.username} → ${comment.slice(0, 60)}…`);
+      replyCount++;
+    } catch (e) {
+      console.log(`  ✗ リプライ失敗 (@${user?.username}): ${e?.data?.detail || e.message}`);
+    }
   }
+  console.log(`リプライ: ${replyCount}件\n`);
+} else if (!process.env.DEEPSEEK_API_KEY) {
+  console.log('DEEPSEEK_API_KEY未設定のためスキップ\n');
 } else {
-  console.log('新しいリプライ候補なし');
+  console.log('新しいリプライ候補なし\n');
 }
 
 // 5. 履歴を保存（直近90日分に刈り込み）
@@ -326,75 +345,8 @@ writeFileSync(ENGAGE_PATH, JSON.stringify(history, null, 2) + '\n');
 console.log('\n=== サマリー ===');
 console.log(`フォロー: +${followCount}（累計${history.followed.length}）`);
 console.log(`いいね: +${likeCount}`);
-console.log(`リプライ候補: ${replyCandidates.length}件`);
+console.log(`リプライ: ${replyCandidates.length}件（自動投稿）`);
 
-// --- 承認済みリプライ投稿 ---
-async function postApprovedReplies() {
-  const engageIssueNumber = CONFIG.engageIssueNumber || 3;
-  const comments = JSON.parse(
-    gh(`issue view ${engageIssueNumber} --repo ${CONFIG.repo} --json comments -q .comments`)
-  );
-
-  let posted = 0;
-  for (const comment of comments) {
-    const lines = comment.body.split('\n');
-    for (let i = 0; i < lines.length; i++) {
-      const ln = lines[i];
-      // チェック済みの候補を探す: - [x] `tweetId` @user: text
-      const m = ln.match(/^- \[[xX]\]\s+`(\d+)`\s+@(\S+):/);
-      if (!m) continue;
-
-      const tweetId = m[1];
-      const targetUser = m[2];
-
-      // 次の行からリプライ案を探す
-      for (let j = i + 1; j < lines.length && j <= i + 3; j++) {
-        const replyMatch = lines[j].match(/リプライ案:\s*(.+)/);
-        if (replyMatch && replyMatch[1] && !replyMatch[1].includes('<!-- ')) {
-          const replyText = replyMatch[1].trim();
-          if (replyText.length < 2) continue;
-
-          // 投稿済みチェック
-          if (history.repliedTweets?.includes(tweetId)) {
-            console.log(`  skip: ${tweetId} (投稿済み)`);
-            continue;
-          }
-
-          try {
-            await client.v2.tweet(replyText, {
-              reply: { in_reply_to_tweet_id: tweetId },
-            });
-            console.log(`  ✓ リプライ投稿: @${targetUser} → ${replyText.slice(0, 50)}…`);
-            if (!history.repliedTweets) history.repliedTweets = [];
-            history.repliedTweets.push(tweetId);
-            posted++;
-          } catch (e) {
-            console.log(`  ✗ リプライ失敗 (${tweetId}): ${e?.data?.detail || e.message}`);
-          }
-        }
-      }
-    }
-  }
-
-  // 残りの承認済み（未投稿）リプライ数をカウント
-  let remainingApproved = 0;
-  for (const c of comments) {
-    for (const ln of c.body.split('\n')) {
-      const m2 = ln.match(/^- \[[xX]\]\s+`(\d+)`/);
-      if (m2 && !history.repliedTweets?.includes(m2[1])) {
-        remainingApproved++;
-      }
-    }
-  }
-  remainingApproved -= posted; // 今回投稿した分を引く
-
-  if (process.env.GITHUB_OUTPUT) {
-    appendFileSync(process.env.GITHUB_OUTPUT, `reply_remaining=${remainingApproved}\n`);
-  }
-
-  writeFileSync(ENGAGE_PATH, JSON.stringify(history, null, 2) + '\n');
-  console.log(`リプライ投稿: ${posted}件（残ストック: ${remainingApproved}件）`);
-}
 
 // --- 自分の投稿への返信を検知して自動で返信 ---
 async function autoReplyToMentions() {
