@@ -183,10 +183,11 @@ for (const t of likeable) {
 }
 console.log(`いいね: ${likeCount}件\n`);
 
-// 4. 引用RT（DeepSeekでコメント生成→自動投稿、1日2件上限）
-console.log('=== 引用RT ===');
-const QUOTE_LIMIT = CONFIG.quoteLimit || 2;
-const quotedSet = new Set(history.quotedTweetIds);
+// 4. コメントリプライ（エンゲージメント高のツイートにDeepSeekでコメント生成→リプライ）
+// ※ 引用RTはX APIの制限（メンション外の投稿は引用不可）で使えないため、リプライで代替
+console.log('=== コメントリプライ ===');
+const COMMENT_LIMIT = CONFIG.commentReplyLimit || 2;
+const commentedSet = new Set(history.quotedTweetIds); // 既存の履歴キーを流用
 
 if (process.env.DEEPSEEK_API_KEY) {
   const ai = new OpenAI({
@@ -194,23 +195,22 @@ if (process.env.DEEPSEEK_API_KEY) {
     apiKey: process.env.DEEPSEEK_API_KEY,
   });
 
-  // 引用RT候補: エンゲージメントが高く、クリニック経営に関連するツイート
-  const quoteCandidates = uniqueTweets
+  // 候補: エンゲージメントが高いツイート
+  const commentCandidates = uniqueTweets
     .filter(t => {
       const score = (t.public_metrics?.like_count || 0) + (t.public_metrics?.retweet_count || 0) * 3;
-      return score >= 3 && !quotedSet.has(t.id) && !likedSet.has(t.id);
+      return score >= 3 && !commentedSet.has(t.id) && !likedSet.has(t.id);
     })
     .sort((a, b) => {
       const scoreA = (a.public_metrics?.like_count || 0) + (a.public_metrics?.retweet_count || 0) * 3;
       const scoreB = (b.public_metrics?.like_count || 0) + (b.public_metrics?.retweet_count || 0) * 3;
       return scoreB - scoreA;
     })
-    .slice(0, QUOTE_LIMIT);
+    .slice(0, COMMENT_LIMIT);
 
-  let quoteCount = 0;
-  for (const t of quoteCandidates) {
+  let commentCount = 0;
+  for (const t of commentCandidates) {
     const user = t._user;
-    const tweetUrl = `https://x.com/${user?.username || 'i'}/status/${t.id}`;
 
     try {
       const res = await ai.chat.completions.create({
@@ -218,17 +218,16 @@ if (process.env.DEEPSEEK_API_KEY) {
         messages: [
           {
             role: 'system',
-            content: `あなたはクリニック経営に詳しい「古家聡大」としてXの引用RTコメントを書きます。
+            content: `あなたはクリニック経営に詳しい「古家聡大」としてXのリプライを書きます。
 ルール:
 - 50〜100文字程度の短いコメント
-- 「先生」と呼ぶ口調
-- 押し売りしない。共感・補足・問いかけのいずれか
+- 共感・補足・問いかけのいずれか。押し売りしない
 - 「ミルカルテ」というサービス名は絶対に出さない
-- コメント本文のみ出力（引用元URLは含めない）`,
+- 返信本文のみ出力（@メンションは含めない）`,
           },
           {
             role: 'user',
-            content: `以下のツイートに引用RTコメントを1つだけ書いてください。\n\n@${user?.username}: ${t.text}`,
+            content: `以下のツイートにリプライを1つだけ書いてください。\n\n@${user?.username}: ${t.text}`,
           },
         ],
         temperature: 0.8,
@@ -236,25 +235,21 @@ if (process.env.DEEPSEEK_API_KEY) {
       });
 
       let comment = res.choices[0].message.content.trim();
-      // 先頭・末尾の引用符を除去
       comment = comment.replace(/^["「『]|["」』]$/g, '');
 
-      // 引用RTとして投稿（quote_tweet_id を使用）
-      const posted = await client.v2.tweet(comment, {
-        quote_tweet_id: t.id,
+      await client.v2.tweet(comment, {
+        reply: { in_reply_to_tweet_id: t.id },
       });
-      const postedUrl = `https://x.com/${CONFIG.account}/status/${posted.data.id}`;
-      console.log(`  ✓ 引用RT: @${user?.username} → ${comment.slice(0, 50)}…`);
-      console.log(`    ${postedUrl}`);
+      console.log(`  ✓ コメントリプライ: @${user?.username} → ${comment.slice(0, 50)}…`);
 
       history.quotedTweetIds.push(t.id);
-      quotedSet.add(t.id);
-      quoteCount++;
+      commentedSet.add(t.id);
+      commentCount++;
     } catch (e) {
-      console.log(`  ✗ 引用RT失敗 (@${user?.username}): ${e?.data?.detail || e.message}`);
+      console.log(`  ✗ コメントリプライ失敗 (@${user?.username}): ${e?.data?.detail || e.message}`);
     }
   }
-  console.log(`引用RT: ${quoteCount}件\n`);
+  console.log(`コメントリプライ: ${commentCount}件\n`);
 } else {
   console.log('DEEPSEEK_API_KEY未設定のためスキップ\n');
 }
