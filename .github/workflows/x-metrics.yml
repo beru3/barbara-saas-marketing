@@ -17,10 +17,10 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
       - name: 依存関係のインストール
         run: npm ci --prefix x-bot
       - name: メトリクス取得・レポート送信
@@ -43,3 +43,11 @@ jobs:
             git pull --rebase origin main
             git push
           fi
+
+      - name: 失敗をIssueに通知
+        if: failure()
+        run: >-
+          gh issue comment 2 --repo ${{ github.repository }}
+          --body "[失敗] ${{ github.workflow }} が失敗しました: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
