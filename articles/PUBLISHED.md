@@ -30,6 +30,7 @@
 | 22 | 患者データを経営に活かす｜小さなクリニックの現実的な始め方 | [22](22_patient_data_practical_start.md) | 2026-05-16 | https://note.com/furuie_akihiro/n/n1d959eed43f2 |
 | 23 | 2026年に生き残るクリニックが今やっている5つのこと | [23](23_survival_strategy_2026.md) | 2026-05-16 | https://note.com/furuie_akihiro/n/n7dba994231fa |
 | 24 | 【保存版】患者が来なくなるのを防ぐ経営チェックリスト7選 | [24](24_patient_retention_checklist.md) | 2026-05-16 | https://note.com/furuie_akihiro/n/nf015dd25810a |
+| 25 | 梅雨に患者が来なくなる本当の理由｜季節の離脱を防ぐ3つの対策 | [25](25_rainy_season_patient_dropout.md) | 2026-06-23 | https://note.com/furuie_akihiro/n/n40bba0c63a4c |
 
 ---
 
