@@ -1,0 +1,14 @@
+name: Inject posts into Issue queue
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node x-bot/inject-posts.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
