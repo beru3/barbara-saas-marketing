@@ -1,0 +1,26 @@
+name: Apply pending posts 20260720
+on:
+  workflow_dispatch:
+permissions:
+  issues: write
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Apply posts to Issue #1
+        run: node x-bot/apply-pending-20260720.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cleanup helper files
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git rm x-bot/apply-pending-20260720.mjs .github/workflows/apply-pending-20260720.yml
+          git commit -m "chore: remove apply-pending-20260720 after run"
+          git push
+        continue-on-error: true
