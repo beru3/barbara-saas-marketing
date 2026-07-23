@@ -1,0 +1,30 @@
+name: Inject entries 2026-07-23
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: npm ci --prefix x-bot
+      - name: 投稿案3件を承認待ちに追加
+        run: node x-bot/inject-entries.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 一時ファイルを削除
+        run: |
+          git config user.name "x-bot"
+          git config user.email "noreply@anthropic.com"
+          git rm x-bot/inject-entries.mjs
+          git rm .github/workflows/inject-entries.yml
+          git commit -m "chore: 一時スクリプト削除（gen-20260723 追加完了）"
+          git push
