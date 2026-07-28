@@ -1,0 +1,49 @@
+name: Add gen-20260728 entries to Issue 1
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  update-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 1
+            });
+            let body = issue.body;
+
+            if (body.includes('gen-20260728')) {
+              console.log('gen-20260728 entries already exist, skipping');
+              return;
+            }
+
+            const newEntries = [
+              "- [ ] `gen-20260728-1` 今週、各地で最高気温38～39℃の猛暑が続いています。「夏は仕方ない」と受け身でいた院が秋に気づくのは、来院が静かに減っていたことです。夏の後回しは気温が下がっても自然には解消しない——今週が手を打てるタイミングです。",
+              "- [ ] `gen-20260728-2` 生活習慣病の患者さんが夏に来なくなる理由は3つ。「症状が和らいで大丈夫と感じた」「暑くて外出が億劫」「次の来院日が決まっていない」——どれも患者さんのせいではありません。先生の院で今当てはまる患者さんが何人いるか、わかりますか。→ https://note.com/furuie_akihiro/n/n78a4b50b49bb",
+              "- [ ] `gen-20260728-3` お盆前後、スタッフが休みに入る時期です。患者フォローが特定のスタッフの記憶や気配りに頼っている院では、その人が休んだ日から動きが止まります。この夏「仕組みで回っているか」を一度確かめてみてください。→ https://note.com/furuie_akihiro/n/n1327b5ec4e27"
+            ].join('\n');
+
+            const marker = '先生の院に、来月の動き方の根拠がありますか。';
+            const searchStr = marker + '\n\n## 投稿済み';
+
+            if (!body.includes(searchStr)) {
+              core.setFailed('Marker not found');
+              return;
+            }
+
+            const newBody = body.replace(searchStr, marker + '\n' + newEntries + '\n\n## 投稿済み');
+
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 1,
+              body: newBody
+            });
+            console.log('Issue #1 updated with gen-20260728 entries');
