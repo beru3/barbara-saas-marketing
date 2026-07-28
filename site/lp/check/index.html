@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WB6W7GSV53"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-WB6W7GSV53');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>患者離脱リスク診断 — あなたのクリニック、年間何人が静かに離脱していますか？</title>
+  <meta name="description" content="診療科と患者数を入力するだけ。1分であなたのクリニックの推定離脱患者数と年間損失額を算出します。" />
+
+  <!-- OGP -->
+  <meta property="og:title" content="患者離脱リスク診断 — 年間何人が静かに離脱していますか？" />
+  <meta property="og:description" content="診療科と患者数を入力するだけ。1分で推定離脱患者数と年間損失額を算出。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              50: '#f0f4f8', 100: '#d9e2ec', 200: '#bcccdc', 300: '#9fb3c8',
+              400: '#829ab1', 500: '#627d98', 600: '#486581', 700: '#334e68',
+              800: '#243b53', 900: '#102a43',
+            },
+            brand: {
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#2563eb', 600: '#1d4ed8', 700: '#1e40af',
+              800: '#1e3a8a', 900: '#1e2a5e',
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .result-card { display: none; }
+    .result-card.show { display: block; }
+  </style>
+</head>
+<body class="bg-white text-navy-900 font-sans antialiased">
+
+  <!-- ========== HERO ========== -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-navy-900 via-navy-800 to-brand-800 text-white">
+    <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 py-4 sm:px-6">
+      <span class="text-xl font-bold tracking-wide">患者離脱リスク診断</span>
+      <a href="#diagnosis" class="hidden sm:inline-block rounded-full bg-brand-500 hover:bg-brand-400 transition px-5 py-2 text-sm font-semibold text-white">
+        無料で診断する
+      </a>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-32 text-center">
+      <p class="inline-block rounded-full bg-white/10 backdrop-blur px-4 py-1.5 text-sm font-medium mb-6">
+        クリニック院長向け 無料診断ツール
+      </p>
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+        先生のクリニック、<br class="hidden sm:block" />
+        年間<span class="text-brand-300">何人</span>の患者が<br class="hidden sm:block" />
+        静かに離脱していますか？
+      </h1>
+      <p class="max-w-2xl mx-auto text-lg sm:text-xl text-navy-200 mb-10">
+        診療科と患者数を入力するだけ。<br class="sm:hidden" />
+        たった<strong class="text-white">1分</strong>で推定離脱患者数と年間損失額を算出します。
+      </p>
+      <a href="#diagnosis" class="inline-block rounded-full bg-brand-500 hover:bg-brand-400 active:bg-brand-600 transition text-white font-bold text-lg px-8 py-4 shadow-lg shadow-brand-500/30">
+        無料で離脱リスクを診断する
+      </a>
+      <p class="mt-4 text-sm text-navy-300">登録不要 / 1分で完了 / 完全無料</p>
+    </div>
+
+    <svg class="absolute bottom-0 left-0 w-full" viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0 80h1440V30C1200 70 960 0 720 30S240 90 0 30v50z" fill="white"/>
+    </svg>
+  </section>
+
+  <!-- ========== PROBLEM ========== -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24" id="problem">
+    <div class="text-center mb-12">
+      <p class="text-brand-600 font-semibold text-sm tracking-wider uppercase mb-2">Problem</p>
+      <h2 class="text-2xl sm:text-4xl font-bold">クリニック経営を蝕む、<br class="sm:hidden" />「見えない離脱」の実態</h2>
+    </div>
+
+    <div class="grid gap-8 sm:grid-cols-3">
+      <div class="bg-navy-50 rounded-2xl p-6 sm:p-8">
+        <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-2xl font-bold mb-4">!</div>
+        <h3 class="text-lg font-bold mb-2">離脱に気づけない</h3>
+        <p class="text-navy-600 text-sm leading-relaxed">
+          3ヶ月以上来ていない患者が何人いるか、即答できる院長はほとんどいません。
+          レセコンにデータはあっても、<strong>「来なくなった人」を抽出する仕組み</strong>がないのです。
+        </p>
+      </div>
+      <div class="bg-navy-50 rounded-2xl p-6 sm:p-8">
+        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl font-bold mb-4">?</div>
+        <h3 class="text-lg font-bold mb-2">気づいた時には手遅れ</h3>
+        <p class="text-navy-600 text-sm leading-relaxed">
+          離脱後1ヶ月以内なら声をかければ戻る患者も、3ヶ月を過ぎると復帰率は激減。
+          <strong>「なんとなく減った」と感じた時には、すでに数十人が離脱した後</strong>です。
+        </p>
+      </div>
+      <div class="bg-navy-50 rounded-2xl p-6 sm:p-8">
+        <div class="w-12 h-12 rounded-xl bg-navy-200 text-navy-700 flex items-center justify-center text-xl font-bold mb-4">&yen;</div>
+        <h3 class="text-lg font-bold mb-2">新患獲得は5倍高い</h3>
+        <p class="text-navy-600 text-sm leading-relaxed">
+          新しい患者を1人獲得するコストは、既存患者を維持するコストの<strong>5倍</strong>。
+          離脱を放置して新患で埋めようとするのは、穴の空いたバケツに水を注ぎ続けるようなものです。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== DATA ========== -->
+  <section class="bg-gradient-to-b from-navy-50 to-white py-16 sm:py-24" id="data">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-12">
+        <p class="text-brand-600 font-semibold text-sm tracking-wider uppercase mb-2">Data</p>
+        <h2 class="text-2xl sm:text-4xl font-bold">数字が示す、離脱の深刻さ</h2>
+      </div>
+
+      <div class="grid gap-8 sm:grid-cols-3 max-w-4xl mx-auto">
+        <div class="text-center bg-navy-900 text-white rounded-2xl p-8">
+          <p class="text-5xl font-extrabold text-brand-300 mb-2">15<span class="text-3xl">%</span></p>
+          <p class="text-navy-200 text-sm leading-relaxed">
+            慢性疾患の患者が<br /><strong class="text-white">年間で離脱する割合</strong>
+          </p>
+        </div>
+        <div class="text-center bg-navy-900 text-white rounded-2xl p-8">
+          <p class="text-5xl font-extrabold text-brand-300 mb-2">143<span class="text-3xl">万円</span></p>
+          <p class="text-navy-200 text-sm leading-relaxed">
+            患者300人の院で<br /><strong class="text-white">梅雨離脱だけの年間損失</strong>
+          </p>
+        </div>
+        <div class="text-center bg-navy-900 text-white rounded-2xl p-8">
+          <p class="text-5xl font-extrabold text-brand-300 mb-2">3<span class="text-3xl">割</span></p>
+          <p class="text-navy-200 text-sm leading-relaxed">
+            一度離脱した患者で<br /><strong class="text-white">二度と戻らない割合</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== DIAGNOSIS TOOL ========== -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24" id="diagnosis">
+    <div class="text-center mb-12">
+      <p class="text-brand-600 font-semibold text-sm tracking-wider uppercase mb-2">Free Diagnosis</p>
+      <h2 class="text-2xl sm:text-4xl font-bold">1分で分かる、先生の院の離脱リスク</h2>
+      <p class="text-navy-500 mt-3">3つの項目を入力するだけで、推定離脱患者数と年間損失額を算出します。</p>
+    </div>
+
+    <div class="max-w-lg mx-auto">
+      <div id="diagnosisForm" class="bg-white rounded-2xl shadow-lg shadow-navy-100/50 border border-navy-100 p-8">
+        <!-- Q1 -->
+        <div class="mb-6">
+          <label class="block text-sm font-bold text-navy-800 mb-2">1. 主な診療科</label>
+          <select id="specialty" class="w-full border border-navy-200 rounded-lg px-4 py-3 text-navy-800 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+            <option value="">選択してください</option>
+            <option value="internal">内科・総合診療</option>
+            <option value="lifestyle">生活習慣病（糖尿病・高血圧等）</option>
+            <option value="ortho">整形外科</option>
+            <option value="derma">皮膚科</option>
+            <option value="ent">耳鼻咽喉科</option>
+            <option value="pediatric">小児科</option>
+            <option value="cardio">循環器内科</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+
+        <!-- Q2 -->
+        <div class="mb-6">
+          <label class="block text-sm font-bold text-navy-800 mb-2">2. 1日の平均外来患者数</label>
+          <select id="dailyPatients" class="w-full border border-navy-200 rounded-lg px-4 py-3 text-navy-800 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+            <option value="">選択してください</option>
+            <option value="20">20人以下</option>
+            <option value="35">21〜50人</option>
+            <option value="65">51〜80人</option>
+            <option value="90">81〜100人</option>
+            <option value="120">101人以上</option>
+          </select>
+        </div>
+
+        <!-- Q3 -->
+        <div class="mb-8">
+          <label class="block text-sm font-bold text-navy-800 mb-2">3. 慢性疾患（定期通院）の患者の割合</label>
+          <select id="chronicRatio" class="w-full border border-navy-200 rounded-lg px-4 py-3 text-navy-800 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+            <option value="">選択してください</option>
+            <option value="0.2">2割程度</option>
+            <option value="0.4">4割程度</option>
+            <option value="0.6">6割程度</option>
+            <option value="0.8">8割以上</option>
+          </select>
+        </div>
+
+        <button onclick="runDiagnosis()" class="w-full rounded-full bg-brand-500 hover:bg-brand-400 active:bg-brand-600 transition text-white font-bold text-lg py-4 shadow-lg shadow-brand-500/30">
+          離脱リスクを診断する
+        </button>
+        <p class="text-center text-navy-400 text-xs mt-3">入力データは診断以外の目的には使用しません</p>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultCard" class="result-card bg-white rounded-2xl shadow-lg shadow-navy-100/50 border-2 border-brand-500 p-8 mt-8">
+        <h3 class="text-xl font-bold text-center mb-6">先生の院の離脱リスク診断結果</h3>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-red-50 rounded-xl p-4 text-center">
+            <p class="text-sm text-navy-500 mb-1">推定年間離脱患者数</p>
+            <p class="text-3xl font-extrabold text-red-600"><span id="resultDropout">—</span><span class="text-lg">人</span></p>
+          </div>
+          <div class="bg-red-50 rounded-xl p-4 text-center">
+            <p class="text-sm text-navy-500 mb-1">推定年間損失額</p>
+            <p class="text-3xl font-extrabold text-red-600"><span id="resultLoss">—</span><span class="text-lg">万円</span></p>
+          </div>
+        </div>
+
+        <div class="bg-navy-50 rounded-xl p-4 mb-6">
+          <p class="text-sm text-navy-600 leading-relaxed" id="resultMessage"></p>
+        </div>
+
+        <div class="border-t border-navy-100 pt-6">
+          <p class="text-sm font-bold text-navy-800 mb-3 text-center">この離脱を防ぐ方法を知りたい先生へ</p>
+          <p class="text-sm text-navy-600 mb-4 text-center">
+            いま「初期参画院」として、先生の院のデータで離脱予備軍を実際に可視化する無料プログラムを実施しています。
+          </p>
+          <a id="ctaLink" href="https://docs.google.com/forms/d/e/1FAIpQLSdqB7sG34VkiwcrkcMTcgdB6e8A6ly24DtUADhG7mKgCJyfXA/viewform" target="_blank" rel="noopener"
+             class="block text-center rounded-full bg-brand-500 hover:bg-brand-400 active:bg-brand-600 transition text-white font-bold py-3 shadow-md shadow-brand-500/20">
+            初期参画院の詳細を見る
+          </a>
+          <p class="text-center text-navy-400 text-xs mt-3">費用無料 / 月1回15分のフィードバックのみ</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="bg-navy-900 text-navy-400 text-xs py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <span class="font-semibold text-white text-sm">患者離脱リスク診断</span>
+      <p>&copy; 2026 合同会社バーバラ企画</p>
+    </div>
+  </footer>
+
+  <script>
+    function runDiagnosis() {
+      const specialty = document.getElementById('specialty').value;
+      const daily = parseInt(document.getElementById('dailyPatients').value);
+      const chronic = parseFloat(document.getElementById('chronicRatio').value);
+
+      if (!specialty || !daily || !chronic) {
+        alert('すべての項目を選択してください');
+        return;
+      }
+
+      // Dropout rate varies by specialty
+      const dropoutRates = {
+        internal: 0.15, lifestyle: 0.18, ortho: 0.22, derma: 0.25,
+        ent: 0.20, pediatric: 0.12, cardio: 0.14, other: 0.16,
+      };
+      const rate = dropoutRates[specialty] || 0.16;
+
+      // Monthly unique patients ≈ daily × 20 working days × 0.6 (repeat adjustment)
+      const monthlyUnique = Math.round(daily * 20 * 0.6);
+      const chronicPatients = Math.round(monthlyUnique * chronic);
+      const annualDropout = Math.round(chronicPatients * rate);
+
+      // Average monthly revenue per chronic patient: ¥8,500
+      const annualLoss = Math.round(annualDropout * 8500 * 12 / 10000);
+
+      document.getElementById('resultDropout').textContent = annualDropout;
+      document.getElementById('resultLoss').textContent = annualLoss;
+
+      let message = '';
+      if (annualLoss >= 500) {
+        message = `先生の院では、年間推定${annualDropout}人の慢性疾患患者が離脱し、約${annualLoss}万円の機会損失が発生している可能性があります。これは3年で${annualLoss * 3}万円。離脱を15%減らすだけでも、年間${Math.round(annualLoss * 0.15)}万円の改善が見込めます。`;
+      } else if (annualLoss >= 200) {
+        message = `先生の院では、年間推定${annualDropout}人の慢性疾患患者が離脱し、約${annualLoss}万円の損失が発生している可能性があります。離脱患者の「早期発見と声かけ」だけで、この損失の一部を取り戻せます。`;
+      } else {
+        message = `先生の院の推定離脱は年間${annualDropout}人、約${annualLoss}万円の損失です。規模は小さく見えますが、毎年積み重なります。今のうちに離脱を可視化する仕組みを作っておくと、将来の損失を防げます。`;
+      }
+      document.getElementById('resultMessage').textContent = message;
+
+      document.getElementById('resultCard').classList.add('show');
+      document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // GA4 event
+      gtag('event', 'diagnosis_complete', {
+        specialty: specialty,
+        daily_patients: daily,
+        chronic_ratio: chronic,
+        estimated_dropout: annualDropout,
+        estimated_loss: annualLoss,
+      });
+    }
+  </script>
+
+</body>
+</html>
