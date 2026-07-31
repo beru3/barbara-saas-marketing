@@ -1,0 +1,42 @@
+name: Add Posts 20260731
+on: workflow_dispatch
+
+jobs:
+  add-posts:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Patch issue body with gen-20260731 entries
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          gh issue view 1 --repo beru3/barbara-saas-marketing --json body -q .body > /tmp/body.txt
+          echo "Body fetched: $(wc -c < /tmp/body.txt) bytes"
+          python3 << 'PYEOF'
+          import sys
+
+          with open('/tmp/body.txt', 'r', encoding='utf-8') as f:
+              body = f.read()
+
+          new_entries = (
+              "- [ ] `gen-20260731-1` 医療機関向け省力化補助金を使える機会が出てきました。「患者管理のツールを入れよう」と考える先生へ。ツールは選ぶ前に「使う場面を決める」ことが先です。それがないと、現場に定着しません。順番を間違えると、補助金だけ使って終わります。→ https://note.com/furuie_akihiro/n/ncbbac4fbfc17\n"
+              "- [ ] `gen-20260731-2` 今日で7月が終わります。先生の院の今月の来院数、先月と比べてどうでしたか。「なんとなく少ない気がする」で終わっていませんか。今日の記録があれば、来月に「去年と比べてどうか」が見えます。記録がなければ、来年の7月も感覚のままです。\n"
+              "- [ ] `gen-20260731-3` 8月を前に、先生は近くのクリニックの動きを気にしていますか。患者さんは先生が思う以上に、受诊先を比べています。「あっちは待ち時間が少ない」——その声は診察室には届きません。競合より先に、自院を外から見る視点が先です。→ https://note.com/furuie_akihiro/n/n7808e4e0f098\n"
+          )
+
+          marker = '\n## 投稿済み'
+          idx = body.find(marker)
+          if idx == -1:
+              raise ValueError("Marker not found in body")
+
+          new_body = body[:idx] + '\n' + new_entries + marker + body[idx+len(marker):]
+
+          with open('/tmp/new_body.txt', 'w', encoding='utf-8') as f:
+              f.write(new_body)
+
+          print(f"Patched: {len(body)} -> {len(new_body)} chars")
+          PYEOF
+          gh issue edit 1 --repo beru3/barbara-saas-marketing --body-file /tmp/new_body.txt
+          echo "Issue updated successfully"
