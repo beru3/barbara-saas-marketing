@@ -1,0 +1,22 @@
+name: X append posts 2026-08-01
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  append:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: npm ci --prefix x-bot
+      - name: Append posts to Issue #1
+        run: node x-bot/append-2026-08-01.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
