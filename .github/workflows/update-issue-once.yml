@@ -3,6 +3,9 @@ name: Update Issue Once
 on:
   workflow_dispatch:
 
+permissions:
+  issues: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
