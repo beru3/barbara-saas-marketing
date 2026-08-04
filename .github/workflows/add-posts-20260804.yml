@@ -1,0 +1,17 @@
+name: Add Posts 20260804
+on:
+  push:
+    paths:
+      - 'x-bot/add-posts-20260804.py'
+  workflow_dispatch:
+jobs:
+  add-posts:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Append posts to Issue 1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 x-bot/add-posts-20260804.py
